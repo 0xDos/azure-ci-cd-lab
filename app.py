@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Version 4 of the application is running!"
+    return "Version 5 of the application is running! >>>>>The last one"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
