@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -18,19 +22,26 @@ jobs:
         with:
           creds: >
             {
-                  "clientId":"${{ secrets.AZURE_CLIENT_ID }}",
-                  "clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}",
-                  "subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}",
-                  "tenantId":"${{ secrets.AZURE_TENANT_ID }}"
-                              }
+              "clientId":"${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret":"${{ secrets.AZURE_CLIENT_SECRET }}",
+              "subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}",
+              "tenantId":"${{ secrets.AZURE_TENANT_ID }}"
+            }
 
       - name: ACR Login
         run: az acr login --name azurecicdlabacr
 
       - name: Build Docker Image
         run: |
-          docker build -t azurecicdlabacr.azurecr.io/flaskapp:v3 .
+          docker build -t azurecicdlabacr.azurecr.io/flaskapp:latest .
 
       - name: Push Docker Image
         run: |
-          docker push azurecicdlabacr.azurecr.io/flaskapp:v3
+          docker push azurecicdlabacr.azurecr.io/flaskapp:latest
+
+      - name: Update Container App
+        run: |
+          az containerapp update \
+            --name flaskapp-prod \
+            --resource-group azure-ci-lab \
+            --image azurecicdlabacr.azurecr.io/flaskapp:latest

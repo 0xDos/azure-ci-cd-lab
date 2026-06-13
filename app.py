@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Version 3 - Auto Deployment Test"
+    return "Version 4 of the application is running!"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
